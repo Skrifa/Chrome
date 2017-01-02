@@ -1,0 +1,6 @@
+.DS_Store
+*.zip
+.ftpconfig
+*~
+._*
+node_modules

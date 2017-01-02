@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+	<head>
+
+		<title>Skrifa</title>
+
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+		<meta name="description" content="A simple word processor built with web technologies.">
+
+		<link rel="shortcut icon" href="img/favicon.ico"/>
+
+		<link rel="stylesheet" href="style/normalize.min.css">
+		<link rel="stylesheet" href="style/animate.min.css">
+		<link rel="stylesheet" href="style/font-awesome.min.css">
+		<link rel="stylesheet" href="style/prism.css">
+		<link rel="stylesheet" href="style/aegis.css">
+		<link rel="stylesheet" href="style/main.css">
+
+		<script src="js/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="js/Mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script src="js/Dexie.min.js"></script>
+		<script src="js/markdown.js"></script>
+		<script src="js/upndown.bundle.min.js"></script>
+		<script src="js/plugins.js"></script>
+		<script src="js/prism.js"></script>
+		<script src="js/config.js"></script>
+		<script src="js/main.js"></script>
+	</head>
+
+	<body class="light">
+        <div class="modal insert-html" data-insert-element="HTML">
+			<textarea placeholder="HTML Code"></textarea>
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal delete-confirmation">
+			<p>Are you sure you want to delete this note?</p>
+			<div class="buttons">
+				<button class="ok">Delete</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal notebook-delete-confirmation">
+			<p>Are you sure you want to delete this Notebook?</p>
+			<p>Behaviour:
+				<select>
+					<option value="Move">Move Notes to Inbox</option>
+					<option value="Delete">Delete Everything</option>
+				</select>
+			</p>
+
+			<div class="buttons">
+				<button class="ok">Delete</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal restore-confirmation">
+			<p>Are you sure you want to restore from this backup? Your current notes will be deleted and replaced with the backup.</p>
+			<div class="buttons">
+				<button class="ok">Restore</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal more-actions">
+			<div class="padded">
+				<button data-action="export">Generate Backup</button>
+				<button data-action="import">Restore from Backup</button>
+			</div>
+			<div class="buttons">
+				<button class="close">Close</button>
+			</div>
+		</div>
+
+		<div class="modal restore-backup">
+			<textarea placeholder="Backup JSON"></textarea>
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal insert-icon">
+<span class="fa fa-bars fa-lg" ></span><span class="fas fas-logo" ></span><span class="fa fa-caret-down" ></span><span class="fa fa-flag fa-fw" ></span><span class="fa fa-diamond fa-fw" ></span><span class="fa fa-camera-retro fa-fw" ></span><span class="fa fa-hand-spock-o fa-fw" ></span><span class="fa fa-ship fa-fw" ></span><span class="fa fa-venus fa-fw" ></span><span class="fa fa-file-image-o fa-fw" ></span><span class="fa fa-spinner fa-fw" ></span><span class="fa fa-check-square fa-fw" ></span><span class="fa fa-credit-card fa-fw" ></span><span class="fa fa-pie-chart fa-fw" ></span><span class="fa fa-won fa-fw" ></span><span class="fa fa-file-text-o fa-fw" ></span><span class="fa fa-arrow-right fa-fw" ></span><span class="fa fa-play-circle fa-fw" ></span><span class="fa fa-github fa-fw" ></span><span class="fa fa-medkit fa-fw" ></span><span class="fa fa-flag" ></span><span class="fa fa-envelope" ></span><span class="fa fa-search" ></span><span class="fas fas-algolia" ></span><span class="fa fa-500px" ></span><span class="fa fa-amazon" ></span><span class="fa fa-balance-scale" ></span><span class="fa fa-battery-0" ></span><span class="fa fa-battery-1" ></span><span class="fa fa-battery-2" ></span><span class="fa fa-battery-3" ></span><span class="fa fa-battery-4" ></span><span class="fa fa-battery-empty" ></span><span class="fa fa-battery-full" ></span><span class="fa fa-battery-half" ></span><span class="fa fa-battery-quarter" ></span><span class="fa fa-battery-three-quarters" ></span><span class="fa fa-black-tie" ></span><span class="fa fa-calendar-check-o" ></span><span class="fa fa-calendar-minus-o" ></span><span class="fa fa-calendar-plus-o" ></span><span class="fa fa-calendar-times-o" ></span><span class="fa fa-cc-diners-club" ></span><span class="fa fa-cc-jcb" ></span><span class="fa fa-chrome" ></span><span class="fa fa-clone" ></span><span class="fa fa-commenting" ></span><span class="fa fa-commenting-o" ></span><span class="fa fa-contao" ></span><span class="fa fa-creative-commons" ></span><span class="fa fa-expeditedssl" ></span><span class="fa fa-firefox" ></span><span class="fa fa-fonticons" ></span><span class="fa fa-genderless" ></span><span class="fa fa-get-pocket" ></span><span class="fa fa-gg" ></span><span class="fa fa-gg-circle" ></span><span class="fa fa-hand-grab-o" ></span><span class="fa fa-hand-lizard-o" ></span><span class="fa fa-hand-paper-o" ></span><span class="fa fa-hand-peace-o" ></span><span class="fa fa-hand-pointer-o" ></span><span class="fa fa-hand-rock-o" ></span><span class="fa fa-hand-scissors-o" ></span><span class="fa fa-hand-spock-o" ></span><span class="fa fa-hand-stop-o" ></span><span class="fa fa-hourglass" ></span><span class="fa fa-hourglass-1" ></span><span class="fa fa-hourglass-2" ></span><span class="fa fa-hourglass-3" ></span><span class="fa fa-hourglass-end" ></span><span class="fa fa-hourglass-half" ></span><span class="fa fa-hourglass-o" ></span><span class="fa fa-hourglass-start" ></span><span class="fa fa-houzz" ></span><span class="fa fa-i-cursor" ></span><span class="fa fa-industry" ></span><span class="fa fa-internet-explorer" ></span><span class="fa fa-map" ></span><span class="fa fa-map-o" ></span><span class="fa fa-map-pin" ></span><span class="fa fa-map-signs" ></span><span class="fa fa-mouse-pointer" ></span><span class="fa fa-object-group" ></span><span class="fa fa-object-ungroup" ></span><span class="fa fa-odnoklassniki" ></span><span class="fa fa-odnoklassniki-square" ></span><span class="fa fa-opencart" ></span><span class="fa fa-opera" ></span><span class="fa fa-optin-monster" ></span><span class="fa fa-registered" ></span><span class="fa fa-safari" ></span><span class="fa fa-sticky-note" ></span><span class="fa fa-sticky-note-o" ></span><span class="fa fa-television" ></span><span class="fa fa-trademark" ></span><span class="fa fa-tripadvisor" ></span><span class="fa fa-tv" ></span><span class="fa fa-vimeo" ></span><span class="fa fa-wikipedia-w" ></span><span class="fa fa-y-combinator" ></span><span class="fa fa-yc" ></span><span class="fa fa-adjust" ></span><span class="fa fa-anchor" ></span><span class="fa fa-archive" ></span><span class="fa fa-area-chart" ></span><span class="fa fa-arrows" ></span><span class="fa fa-arrows-h" ></span><span class="fa fa-arrows-v" ></span><span class="fa fa-asterisk" ></span><span class="fa fa-at" ></span><span class="fa fa-automobile" ></span><span class="fa fa-ban" ></span><span class="fa fa-bank" ></span><span class="fa fa-bar-chart" ></span><span class="fa fa-bar-chart-o" ></span><span class="fa fa-barcode" ></span><span class="fa fa-bars" ></span><span class="fa fa-bed" ></span><span class="fa fa-beer" ></span><span class="fa fa-bell" ></span><span class="fa fa-bell-o" ></span><span class="fa fa-bell-slash" ></span><span class="fa fa-bell-slash-o" ></span><span class="fa fa-bicycle" ></span><span class="fa fa-binoculars" ></span><span class="fa fa-birthday-cake" ></span><span class="fa fa-bolt" ></span><span class="fa fa-bomb" ></span><span class="fa fa-book" ></span><span class="fa fa-bookmark" ></span><span class="fa fa-bookmark-o" ></span><span class="fa fa-briefcase" ></span><span class="fa fa-bug" ></span><span class="fa fa-building" ></span><span class="fa fa-building-o" ></span><span class="fa fa-bullhorn" ></span><span class="fa fa-bullseye" ></span><span class="fa fa-bus" ></span><span class="fa fa-cab" ></span><span class="fa fa-calculator" ></span><span class="fa fa-calendar" ></span><span class="fa fa-calendar-o" ></span><span class="fa fa-camera" ></span><span class="fa fa-camera-retro" ></span><span class="fa fa-car" ></span><span class="fa fa-caret-square-o-down" ></span><span class="fa fa-caret-square-o-left" ></span><span class="fa fa-caret-square-o-right" ></span><span class="fa fa-caret-square-o-up" ></span><span class="fa fa-cart-arrow-down" ></span><span class="fa fa-cart-plus" ></span><span class="fa fa-cc" ></span><span class="fa fa-certificate" ></span><span class="fa fa-check" ></span><span class="fa fa-check-circle" ></span><span class="fa fa-check-circle-o" ></span><span class="fa fa-check-square" ></span><span class="fa fa-check-square-o" ></span><span class="fa fa-child" ></span><span class="fa fa-circle" ></span><span class="fa fa-circle-o" ></span><span class="fa fa-circle-o-notch" ></span><span class="fa fa-circle-thin" ></span><span class="fa fa-clock-o" ></span><span class="fa fa-close" ></span><span class="fa fa-cloud" ></span><span class="fa fa-cloud-download" ></span><span class="fa fa-cloud-upload" ></span><span class="fa fa-code" ></span><span class="fa fa-code-fork" ></span><span class="fa fa-coffee" ></span><span class="fa fa-cog" ></span><span class="fa fa-cogs" ></span><span class="fa fa-comment" ></span><span class="fa fa-comment-o" ></span><span class="fa fa-comments" ></span><span class="fa fa-comments-o" ></span><span class="fa fa-compass" ></span><span class="fa fa-copyright" ></span><span class="fa fa-credit-card" ></span><span class="fa fa-crop" ></span><span class="fa fa-crosshairs" ></span><span class="fa fa-cube" ></span><span class="fa fa-cubes" ></span><span class="fa fa-cutlery" ></span><span class="fa fa-dashboard" ></span><span class="fa fa-database" ></span><span class="fa fa-desktop" ></span><span class="fa fa-diamond" ></span><span class="fa fa-dot-circle-o" ></span><span class="fa fa-download" ></span><span class="fa fa-edit" ></span><span class="fa fa-ellipsis-h" ></span><span class="fa fa-ellipsis-v" ></span><span class="fa fa-envelope-o" ></span><span class="fa fa-envelope-square" ></span><span class="fa fa-eraser" ></span><span class="fa fa-exchange" ></span><span class="fa fa-exclamation" ></span><span class="fa fa-exclamation-circle" ></span><span class="fa fa-exclamation-triangle" ></span><span class="fa fa-external-link" ></span><span class="fa fa-external-link-square" ></span><span class="fa fa-eye" ></span><span class="fa fa-eye-slash" ></span><span class="fa fa-eyedropper" ></span><span class="fa fa-fax" ></span><span class="fa fa-feed" ></span><span class="fa fa-female" ></span><span class="fa fa-fighter-jet" ></span><span class="fa fa-file-archive-o" ></span><span class="fa fa-file-audio-o" ></span><span class="fa fa-file-code-o" ></span><span class="fa fa-file-excel-o" ></span><span class="fa fa-file-image-o" ></span><span class="fa fa-file-movie-o" ></span><span class="fa fa-file-pdf-o" ></span><span class="fa fa-file-photo-o" ></span><span class="fa fa-file-picture-o" ></span><span class="fa fa-file-powerpoint-o" ></span><span class="fa fa-file-sound-o" ></span><span class="fa fa-file-video-o" ></span><span class="fa fa-file-word-o" ></span><span class="fa fa-file-zip-o" ></span><span class="fa fa-film" ></span><span class="fa fa-filter" ></span><span class="fa fa-fire" ></span><span class="fa fa-fire-extinguisher" ></span><span class="fa fa-flag-checkered" ></span><span class="fa fa-flag-o" ></span><span class="fa fa-flash" ></span><span class="fa fa-flask" ></span><span class="fa fa-folder" ></span><span class="fa fa-folder-o" ></span><span class="fa fa-folder-open" ></span><span class="fa fa-folder-open-o" ></span><span class="fa fa-frown-o" ></span><span class="fa fa-futbol-o" ></span><span class="fa fa-gamepad" ></span><span class="fa fa-gavel" ></span><span class="fa fa-gear" ></span><span class="fa fa-gears" ></span><span class="fa fa-gift" ></span><span class="fa fa-glass" ></span><span class="fa fa-globe" ></span><span class="fa fa-graduation-cap" ></span><span class="fa fa-group" ></span><span class="fa fa-hdd-o" ></span><span class="fa fa-headphones" ></span><span class="fa fa-heart" ></span><span class="fa fa-heart-o" ></span><span class="fa fa-heartbeat" ></span><span class="fa fa-history" ></span><span class="fa fa-home" ></span><span class="fa fa-hotel" ></span><span class="fa fa-image" ></span><span class="fa fa-inbox" ></span><span class="fa fa-info" ></span><span class="fa fa-info-circle" ></span><span class="fa fa-institution" ></span><span class="fa fa-key" ></span><span class="fa fa-keyboard-o" ></span><span class="fa fa-language" ></span><span class="fa fa-laptop" ></span><span class="fa fa-leaf" ></span><span class="fa fa-legal" ></span><span class="fa fa-lemon-o" ></span><span class="fa fa-level-down" ></span><span class="fa fa-level-up" ></span><span class="fa fa-life-bouy" ></span><span class="fa fa-life-buoy" ></span><span class="fa fa-life-ring" ></span><span class="fa fa-life-saver" ></span><span class="fa fa-lightbulb-o" ></span><span class="fa fa-line-chart" ></span><span class="fa fa-location-arrow" ></span><span class="fa fa-lock" ></span><span class="fa fa-magic" ></span><span class="fa fa-magnet" ></span><span class="fa fa-mail-forward" ></span><span class="fa fa-mail-reply" ></span><span class="fa fa-mail-reply-all" ></span><span class="fa fa-male" ></span><span class="fa fa-map-marker" ></span><span class="fa fa-meh-o" ></span><span class="fa fa-microphone" ></span><span class="fa fa-microphone-slash" ></span><span class="fa fa-minus" ></span><span class="fa fa-minus-circle" ></span><span class="fa fa-minus-square" ></span><span class="fa fa-minus-square-o" ></span><span class="fa fa-mobile" ></span><span class="fa fa-mobile-phone" ></span><span class="fa fa-money" ></span><span class="fa fa-moon-o" ></span><span class="fa fa-mortar-board" ></span><span class="fa fa-motorcycle" ></span><span class="fa fa-music" ></span><span class="fa fa-navicon" ></span><span class="fa fa-newspaper-o" ></span><span class="fa fa-paint-brush" ></span><span class="fa fa-paper-plane" ></span><span class="fa fa-paper-plane-o" ></span><span class="fa fa-paw" ></span><span class="fa fa-pencil" ></span><span class="fa fa-pencil-square" ></span><span class="fa fa-pencil-square-o" ></span><span class="fa fa-phone" ></span><span class="fa fa-phone-square" ></span><span class="fa fa-photo" ></span><span class="fa fa-picture-o" ></span><span class="fa fa-pie-chart" ></span><span class="fa fa-plane" ></span><span class="fa fa-plug" ></span><span class="fa fa-plus" ></span><span class="fa fa-plus-circle" ></span><span class="fa fa-plus-square" ></span><span class="fa fa-plus-square-o" ></span><span class="fa fa-power-off" ></span><span class="fa fa-print" ></span><span class="fa fa-puzzle-piece" ></span><span class="fa fa-qrcode" ></span><span class="fa fa-question" ></span><span class="fa fa-question-circle" ></span><span class="fa fa-quote-left" ></span><span class="fa fa-quote-right" ></span><span class="fa fa-random" ></span><span class="fa fa-recycle" ></span><span class="fa fa-refresh" ></span><span class="fa fa-remove" ></span><span class="fa fa-reorder" ></span><span class="fa fa-reply" ></span><span class="fa fa-reply-all" ></span><span class="fa fa-retweet" ></span><span class="fa fa-road" ></span><span class="fa fa-rocket" ></span><span class="fa fa-rss" ></span><span class="fa fa-rss-square" ></span><span class="fa fa-search-minus" ></span><span class="fa fa-search-plus" ></span><span class="fa fa-send" ></span><span class="fa fa-send-o" ></span><span class="fa fa-server" ></span><span class="fa fa-share" ></span><span class="fa fa-share-alt" ></span><span class="fa fa-share-alt-square" ></span><span class="fa fa-share-square" ></span><span class="fa fa-share-square-o" ></span><span class="fa fa-shield" ></span><span class="fa fa-ship" ></span><span class="fa fa-shopping-cart" ></span><span class="fa fa-sign-in" ></span><span class="fa fa-sign-out" ></span><span class="fa fa-signal" ></span><span class="fa fa-sitemap" ></span><span class="fa fa-sliders" ></span><span class="fa fa-smile-o" ></span><span class="fa fa-soccer-ball-o" ></span><span class="fa fa-sort" ></span><span class="fa fa-sort-alpha-asc" ></span><span class="fa fa-sort-alpha-desc" ></span><span class="fa fa-sort-amount-asc" ></span><span class="fa fa-sort-amount-desc" ></span><span class="fa fa-sort-asc" ></span><span class="fa fa-sort-desc" ></span><span class="fa fa-sort-down" ></span><span class="fa fa-sort-numeric-asc" ></span><span class="fa fa-sort-numeric-desc" ></span><span class="fa fa-sort-up" ></span><span class="fa fa-space-shuttle" ></span><span class="fa fa-spinner" ></span><span class="fa fa-spoon" ></span><span class="fa fa-square" ></span><span class="fa fa-square-o" ></span><span class="fa fa-star" ></span><span class="fa fa-star-half" ></span><span class="fa fa-star-half-empty" ></span><span class="fa fa-star-half-full" ></span><span class="fa fa-star-half-o" ></span><span class="fa fa-star-o" ></span><span class="fa fa-street-view" ></span><span class="fa fa-suitcase" ></span><span class="fa fa-sun-o" ></span><span class="fa fa-support" ></span><span class="fa fa-tablet" ></span><span class="fa fa-tachometer" ></span><span class="fa fa-tag" ></span><span class="fa fa-tags" ></span><span class="fa fa-tasks" ></span><span class="fa fa-taxi" ></span><span class="fa fa-terminal" ></span><span class="fa fa-thumb-tack" ></span><span class="fa fa-thumbs-down" ></span><span class="fa fa-thumbs-o-down" ></span><span class="fa fa-thumbs-o-up" ></span><span class="fa fa-thumbs-up" ></span><span class="fa fa-ticket" ></span><span class="fa fa-times" ></span><span class="fa fa-times-circle" ></span><span class="fa fa-times-circle-o" ></span><span class="fa fa-tint" ></span><span class="fa fa-toggle-down" ></span><span class="fa fa-toggle-left" ></span><span class="fa fa-toggle-off" ></span><span class="fa fa-toggle-on" ></span><span class="fa fa-toggle-right" ></span><span class="fa fa-toggle-up" ></span><span class="fa fa-trash" ></span><span class="fa fa-trash-o" ></span><span class="fa fa-tree" ></span><span class="fa fa-trophy" ></span><span class="fa fa-truck" ></span><span class="fa fa-tty" ></span><span class="fa fa-umbrella" ></span><span class="fa fa-university" ></span><span class="fa fa-unlock" ></span><span class="fa fa-unlock-alt" ></span><span class="fa fa-unsorted" ></span><span class="fa fa-upload" ></span><span class="fa fa-user" ></span><span class="fa fa-user-plus" ></span><span class="fa fa-user-secret" ></span><span class="fa fa-user-times" ></span><span class="fa fa-users" ></span><span class="fa fa-video-camera" ></span><span class="fa fa-volume-down" ></span><span class="fa fa-volume-off" ></span><span class="fa fa-volume-up" ></span><span class="fa fa-warning" ></span><span class="fa fa-wheelchair" ></span><span class="fa fa-wifi" ></span><span class="fa fa-wrench" ></span><span class="fa fa-hand-o-down" ></span><span class="fa fa-hand-o-left" ></span><span class="fa fa-hand-o-right" ></span><span class="fa fa-hand-o-up" ></span><span class="fa fa-ambulance" ></span><span class="fa fa-subway" ></span><span class="fa fa-train" ></span><span class="fa fa-intersex" ></span><span class="fa fa-mars" ></span><span class="fa fa-mars-double" ></span><span class="fa fa-mars-stroke" ></span><span class="fa fa-mars-stroke-h" ></span><span class="fa fa-mars-stroke-v" ></span><span class="fa fa-mercury" ></span><span class="fa fa-neuter" ></span><span class="fa fa-transgender" ></span><span class="fa fa-transgender-alt" ></span><span class="fa fa-venus" ></span><span class="fa fa-venus-double" ></span><span class="fa fa-venus-mars" ></span><span class="fa fa-file" ></span><span class="fa fa-file-o" ></span><span class="fa fa-file-text" ></span><span class="fa fa-file-text-o" ></span><span class="fa fa-info-circle fa-lg fa-li" ></span><span class="fa fa-cc-amex" ></span><span class="fa fa-cc-discover" ></span><span class="fa fa-cc-mastercard" ></span><span class="fa fa-cc-paypal" ></span><span class="fa fa-cc-stripe" ></span><span class="fa fa-cc-visa" ></span><span class="fa fa-google-wallet" ></span><span class="fa fa-paypal" ></span><span class="fa fa-bitcoin" ></span><span class="fa fa-btc" ></span><span class="fa fa-cny" ></span><span class="fa fa-dollar" ></span><span class="fa fa-eur" ></span><span class="fa fa-euro" ></span><span class="fa fa-gbp" ></span><span class="fa fa-ils" ></span><span class="fa fa-inr" ></span><span class="fa fa-jpy" ></span><span class="fa fa-krw" ></span><span class="fa fa-rmb" ></span><span class="fa fa-rouble" ></span><span class="fa fa-rub" ></span><span class="fa fa-ruble" ></span><span class="fa fa-rupee" ></span><span class="fa fa-shekel" ></span><span class="fa fa-sheqel" ></span><span class="fa fa-try" ></span><span class="fa fa-turkish-lira" ></span><span class="fa fa-usd" ></span><span class="fa fa-won" ></span><span class="fa fa-yen" ></span><span class="fa fa-align-center" ></span><span class="fa fa-align-justify" ></span><span class="fa fa-align-left" ></span><span class="fa fa-align-right" ></span><span class="fa fa-bold" ></span><span class="fa fa-chain" ></span><span class="fa fa-chain-broken" ></span><span class="fa fa-clipboard" ></span><span class="fa fa-columns" ></span><span class="fa fa-copy" ></span><span class="fa fa-cut" ></span><span class="fa fa-dedent" ></span><span class="fa fa-files-o" ></span><span class="fa fa-floppy-o" ></span><span class="fa fa-font" ></span><span class="fa fa-header" ></span><span class="fa fa-indent" ></span><span class="fa fa-italic" ></span><span class="fa fa-link" ></span><span class="fa fa-list" ></span><span class="fa fa-list-alt" ></span><span class="fa fa-list-ol" ></span><span class="fa fa-list-ul" ></span><span class="fa fa-outdent" ></span><span class="fa fa-paperclip" ></span><span class="fa fa-paragraph" ></span><span class="fa fa-paste" ></span><span class="fa fa-repeat" ></span><span class="fa fa-rotate-left" ></span><span class="fa fa-rotate-right" ></span><span class="fa fa-save" ></span><span class="fa fa-scissors" ></span><span class="fa fa-strikethrough" ></span><span class="fa fa-subscript" ></span><span class="fa fa-superscript" ></span><span class="fa fa-table" ></span><span class="fa fa-text-height" ></span><span class="fa fa-text-width" ></span><span class="fa fa-th" ></span><span class="fa fa-th-large" ></span><span class="fa fa-th-list" ></span><span class="fa fa-underline" ></span><span class="fa fa-undo" ></span><span class="fa fa-unlink" ></span><span class="fa fa-angle-double-down" ></span><span class="fa fa-angle-double-left" ></span><span class="fa fa-angle-double-right" ></span><span class="fa fa-angle-double-up" ></span><span class="fa fa-angle-down" ></span><span class="fa fa-angle-left" ></span><span class="fa fa-angle-right" ></span><span class="fa fa-angle-up" ></span><span class="fa fa-arrow-circle-down" ></span><span class="fa fa-arrow-circle-left" ></span><span class="fa fa-arrow-circle-o-down" ></span><span class="fa fa-arrow-circle-o-left" ></span><span class="fa fa-arrow-circle-o-right" ></span><span class="fa fa-arrow-circle-o-up" ></span><span class="fa fa-arrow-circle-right" ></span><span class="fa fa-arrow-circle-up" ></span><span class="fa fa-arrow-down" ></span><span class="fa fa-arrow-left" ></span><span class="fa fa-arrow-right" ></span><span class="fa fa-arrow-up" ></span><span class="fa fa-arrows-alt" ></span><span class="fa fa-caret-left" ></span><span class="fa fa-caret-right" ></span><span class="fa fa-caret-up" ></span><span class="fa fa-chevron-circle-down" ></span><span class="fa fa-chevron-circle-left" ></span><span class="fa fa-chevron-circle-right" ></span><span class="fa fa-chevron-circle-up" ></span><span class="fa fa-chevron-down" ></span><span class="fa fa-chevron-left" ></span><span class="fa fa-chevron-right" ></span><span class="fa fa-chevron-up" ></span><span class="fa fa-long-arrow-down" ></span><span class="fa fa-long-arrow-left" ></span><span class="fa fa-long-arrow-right" ></span><span class="fa fa-long-arrow-up" ></span><span class="fa fa-backward" ></span><span class="fa fa-compress" ></span><span class="fa fa-eject" ></span><span class="fa fa-expand" ></span><span class="fa fa-fast-backward" ></span><span class="fa fa-fast-forward" ></span><span class="fa fa-forward" ></span><span class="fa fa-pause" ></span><span class="fa fa-play" ></span><span class="fa fa-play-circle" ></span><span class="fa fa-play-circle-o" ></span><span class="fa fa-step-backward" ></span><span class="fa fa-step-forward" ></span><span class="fa fa-stop" ></span><span class="fa fa-youtube-play" ></span><span class="fa fa-adn" ></span><span class="fa fa-android" ></span><span class="fa fa-angellist" ></span><span class="fa fa-apple" ></span><span class="fa fa-behance" ></span><span class="fa fa-behance-square" ></span><span class="fa fa-bitbucket" ></span><span class="fa fa-bitbucket-square" ></span><span class="fa fa-buysellads" ></span><span class="fa fa-codepen" ></span><span class="fa fa-connectdevelop" ></span><span class="fa fa-css3" ></span><span class="fa fa-dashcube" ></span><span class="fa fa-delicious" ></span><span class="fa fa-deviantart" ></span><span class="fa fa-digg" ></span><span class="fa fa-dribbble" ></span><span class="fa fa-dropbox" ></span><span class="fa fa-drupal" ></span><span class="fa fa-empire" ></span><span class="fa fa-facebook" ></span><span class="fa fa-facebook-f" ></span><span class="fa fa-facebook-official" ></span><span class="fa fa-facebook-square" ></span><span class="fa fa-flickr" ></span><span class="fa fa-forumbee" ></span><span class="fa fa-foursquare" ></span><span class="fa fa-ge" ></span><span class="fa fa-git" ></span><span class="fa fa-git-square" ></span><span class="fa fa-github" ></span><span class="fa fa-github-alt" ></span><span class="fa fa-github-square" ></span><span class="fa fa-gittip" ></span><span class="fa fa-google" ></span><span class="fa fa-google-plus" ></span><span class="fa fa-google-plus-square" ></span><span class="fa fa-gratipay" ></span><span class="fa fa-hacker-news" ></span><span class="fa fa-html5" ></span><span class="fa fa-instagram" ></span><span class="fa fa-ioxhost" ></span><span class="fa fa-joomla" ></span><span class="fa fa-jsfiddle" ></span><span class="fa fa-lastfm" ></span><span class="fa fa-lastfm-square" ></span><span class="fa fa-leanpub" ></span><span class="fa fa-linkedin" ></span><span class="fa fa-linkedin-square" ></span><span class="fa fa-linux" ></span><span class="fa fa-maxcdn" ></span><span class="fa fa-meanpath" ></span><span class="fa fa-medium" ></span><span class="fa fa-openid" ></span><span class="fa fa-pagelines" ></span><span class="fa fa-pied-piper" ></span><span class="fa fa-pied-piper-alt" ></span><span class="fa fa-pinterest" ></span><span class="fa fa-pinterest-p" ></span><span class="fa fa-pinterest-square" ></span><span class="fa fa-qq" ></span><span class="fa fa-ra" ></span><span class="fa fa-rebel" ></span><span class="fa fa-reddit" ></span><span class="fa fa-reddit-square" ></span><span class="fa fa-renren" ></span><span class="fa fa-sellsy" ></span><span class="fa fa-shirtsinbulk" ></span><span class="fa fa-simplybuilt" ></span><span class="fa fa-skyatlas" ></span><span class="fa fa-skype" ></span><span class="fa fa-slack" ></span><span class="fa fa-slideshare" ></span><span class="fa fa-soundcloud" ></span><span class="fa fa-spotify" ></span><span class="fa fa-stack-exchange" ></span><span class="fa fa-stack-overflow" ></span><span class="fa fa-steam" ></span><span class="fa fa-steam-square" ></span><span class="fa fa-stumbleupon" ></span><span class="fa fa-stumbleupon-circle" ></span><span class="fa fa-tencent-weibo" ></span><span class="fa fa-trello" ></span><span class="fa fa-tumblr" ></span><span class="fa fa-tumblr-square" ></span><span class="fa fa-twitch" ></span><span class="fa fa-twitter" ></span><span class="fa fa-twitter-square" ></span><span class="fa fa-viacoin" ></span><span class="fa fa-vimeo-square" ></span><span class="fa fa-vine" ></span><span class="fa fa-vk" ></span><span class="fa fa-wechat" ></span><span class="fa fa-weibo" ></span><span class="fa fa-weixin" ></span><span class="fa fa-whatsapp" ></span><span class="fa fa-windows" ></span><span class="fa fa-wordpress" ></span><span class="fa fa-xing" ></span><span class="fa fa-xing-square" ></span><span class="fa fa-y-combinator-square" ></span><span class="fa fa-yahoo" ></span><span class="fa fa-yc-square" ></span><span class="fa fa-yelp" ></span><span class="fa fa-youtube" ></span><span class="fa fa-youtube-square" ></span><span class="fa fa-h-square" ></span><span class="fa fa-hospital-o" ></span><span class="fa fa-medkit" ></span><span class="fa fa-stethoscope" ></span><span class="fa fa-user-md" ></span>
+			<div class="buttons">
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal insert-math">
+			<span class="mathSymbol" alt="\LaTeX" >$\LaTeX$</span><span class="mathSymbol" alt="\pm" >$\pm$</span><span class="mathSymbol" alt="\mp" >$\mp$</span><span class="mathSymbol" alt="\times" >$\times$</span><span class="mathSymbol" alt="\div" >$\div$</span><span class="mathSymbol" alt="\cdot" >$\cdot$</span><span class="mathSymbol" alt="\ast" >$\ast$</span><span class="mathSymbol" alt="\star" >$\star$</span><span class="mathSymbol" alt="\dagger" >$\dagger$</span><span class="mathSymbol" alt="\ddagger" >$\ddagger$</span><span class="mathSymbol" alt="\amalg" >$\amalg$</span><span class="mathSymbol" alt="\cap" >$\cap$</span><span class="mathSymbol" alt="\cup" >$\cup$</span><span class="mathSymbol" alt="\uplus" >$\uplus$</span><span class="mathSymbol" alt="\sqcap" >$\sqcap$</span><span class="mathSymbol" alt="\sqcup" >$\sqcup$</span><span class="mathSymbol" alt="\vee" >$\vee$</span><span class="mathSymbol" alt="\wedge" >$\wedge$</span><span class="mathSymbol" alt="\oplus" >$\oplus$</span><span class="mathSymbol" alt="\ominus" >$\ominus$</span><span class="mathSymbol" alt="\otimes" >$\otimes$</span><span class="mathSymbol" alt="\circ" >$\circ$</span><span class="mathSymbol" alt="\bullet" >$\bullet$</span><span class="mathSymbol" alt="\diamond" >$\diamond$</span><span class="mathSymbol" alt="\lhd" >$\lhd$</span><span class="mathSymbol" alt="\rhd" >$\rhd$</span><span class="mathSymbol" alt="\unlhd" >$\unlhd$</span><span class="mathSymbol" alt="\unrhd" >$\unrhd$</span><span class="mathSymbol" alt="\oslash" >$\oslash$</span><span class="mathSymbol" alt="\odot" >$\odot$</span><span class="mathSymbol" alt="\bigcirc" >$\bigcirc$</span><span class="mathSymbol" alt="\triangleleft" >$\triangleleft$</span><span class="mathSymbol" alt="\Diamond" >$\Diamond$</span><span class="mathSymbol" alt="\bigtriangleup" >$\bigtriangleup$</span><span class="mathSymbol" alt="\bigtriangledown" >$\bigtriangledown$</span><span class="mathSymbol" alt="\Box" >$\Box$</span><span class="mathSymbol" alt="\triangleright" >$\triangleright$</span><span class="mathSymbol" alt="\setminus" >$\setminus$</span><span class="mathSymbol" alt="\wr" >$\wr$</span><span class="mathSymbol" alt="\sqrt{x}" >$\sqrt{x}$</span><span class="mathSymbol" alt="x^{\circ}" >$x^{\circ}$</span><span class="mathSymbol" alt="\sqrt[n]{x}" >$\sqrt[n]{x}$</span><span class="mathSymbol" alt="\triangledown" >$\triangledown$</span><span class="mathSymbol" alt="\le" >$\le$</span><span class="mathSymbol" alt="\ge" >$\ge$</span><span class="mathSymbol" alt="\neq" >$\neq$</span><span class="mathSymbol" alt="\sim" >$\sim$</span><span class="mathSymbol" alt="\ll" >$\ll$</span><span class="mathSymbol" alt="\gg" >$\gg$</span><span class="mathSymbol" alt="\doteq" >$\doteq$</span><span class="mathSymbol" alt="\simeq" >$\simeq$</span><span class="mathSymbol" alt="\subset" >$\subset$</span><span class="mathSymbol" alt="\supset" >$\supset$</span><span class="mathSymbol" alt="\approx" >$\approx$</span><span class="mathSymbol" alt="\asymp" >$\asymp$</span><span class="mathSymbol" alt="\subseteq" >$\subseteq$</span><span class="mathSymbol" alt="\supseteq" >$\supseteq$</span><span class="mathSymbol" alt="\cong" >$\cong$</span><span class="mathSymbol" alt="\smile" >$\smile$</span><span class="mathSymbol" alt="\sqsubset" >$\sqsubset$</span><span class="mathSymbol" alt="\sqsupset" >$\sqsupset$</span><span class="mathSymbol" alt="\equiv" >$\equiv$</span><span class="mathSymbol" alt="\frown" >$\frown$</span><span class="mathSymbol" alt="\sqsubseteq" >$\sqsubseteq$</span><span class="mathSymbol" alt="\sqsupseteq" >$\sqsupseteq$</span><span class="mathSymbol" alt="\propto" >$\propto$</span><span class="mathSymbol" alt="\bowtie" >$\bowtie$</span><span class="mathSymbol" alt="\in" >$\in$</span><span class="mathSymbol" alt="\ni" >$\ni$</span><span class="mathSymbol" alt="\prec" >$\prec$</span><span class="mathSymbol" alt="\succ" >$\succ$</span><span class="mathSymbol" alt="\vdash" >$\vdash$</span><span class="mathSymbol" alt="\dashv" >$\dashv$</span><span class="mathSymbol" alt="\preceq" >$\preceq$</span><span class="mathSymbol" alt="\succeq" >$\succeq$</span><span class="mathSymbol" alt="\models" >$\models$</span><span class="mathSymbol" alt="\perp" >$\perp$</span><span class="mathSymbol" alt="\parallel" >$\parallel$</span><span class="mathSymbol" alt="\|" >$\|$</span><span class="mathSymbol" alt="\mid" >$\mid$</span><span class="mathSymbol" alt="\bumpeq" >$\bumpeq$</span><span class="mathSymbol" alt="\nmid" >$\nmid$</span><span class="mathSymbol" alt="\nleq" >$\nleq$</span><span class="mathSymbol" alt="\ngeq" >$\ngeq$</span><span class="mathSymbol" alt="\nsim" >$\nsim$</span><span class="mathSymbol" alt="\ncong" >$\ncong$</span><span class="mathSymbol" alt="\nparallel" >$\nparallel$</span><span class="mathSymbol" alt="\not<" >$\not<$</span><span class="mathSymbol" alt="\not>" >$\not>$</span><span class="mathSymbol" alt="\not=" >$\not=$</span><span class="mathSymbol" alt="\not\le" >$\not\le$</span><span class="mathSymbol" alt="\not\ge" >$\not\ge$</span><span class="mathSymbol" alt="\not\sim" >$\not\sim$</span><span class="mathSymbol" alt="\not \approx" >$\not \approx$</span><span class="mathSymbol" alt="\not\cong" >$\not\cong$</span><span class="mathSymbol" alt="\not\equiv" >$\not\equiv$</span><span class="mathSymbol" alt="\not\parallel" >$\not\parallel$</span><span class="mathSymbol" alt="\nless" >$\nless$</span><span class="mathSymbol" alt="\ngtr" >$\ngtr$</span><span class="mathSymbol" alt="\lneq" >$\lneq$</span><span class="mathSymbol" alt="\gneq" >$\gneq$</span><span class="mathSymbol" alt="\lnsim" >$\lnsim$</span><span class="mathSymbol" alt="\lneqq" >$\lneqq$</span><span class="mathSymbol" alt="\gneqq" >$\gneqq$</span><span class="mathSymbol" alt="\alpha" >$\alpha$</span><span class="mathSymbol" alt="\beta" >$\beta$</span><span class="mathSymbol" alt="\gamma" >$\gamma$</span><span class="mathSymbol" alt="\delta" >$\delta$</span><span class="mathSymbol" alt="\epsilon" >$\epsilon$</span><span class="mathSymbol" alt="\varepsilon" >$\varepsilon$</span><span class="mathSymbol" alt="\zeta" >$\zeta$</span><span class="mathSymbol" alt="\eta" >$\eta$</span><span class="mathSymbol" alt="\theta" >$\theta$</span><span class="mathSymbol" alt="\vartheta" >$\vartheta$</span><span class="mathSymbol" alt="\iota" >$\iota$</span><span class="mathSymbol" alt="\kappa" >$\kappa$</span><span class="mathSymbol" alt="\lambda" >$\lambda$</span><span class="mathSymbol" alt="\mu" >$\mu$</span><span class="mathSymbol" alt="\nu" >$\nu$</span><span class="mathSymbol" alt="\xi" >$\xi$</span><span class="mathSymbol" alt="\pi" >$\pi$</span><span class="mathSymbol" alt="\varpi" >$\varpi$</span><span class="mathSymbol" alt="\rho" >$\rho$</span><span class="mathSymbol" alt="\varrho" >$\varrho$</span><span class="mathSymbol" alt="\sigma" >$\sigma$</span><span class="mathSymbol" alt="\varsigma" >$\varsigma$</span><span class="mathSymbol" alt="\tau" >$\tau$</span><span class="mathSymbol" alt="\upsilon" >$\upsilon$</span><span class="mathSymbol" alt="\phi" >$\phi$</span><span class="mathSymbol" alt="\varphi" >$\varphi$</span><span class="mathSymbol" alt="\chi" >$\chi$</span><span class="mathSymbol" alt="\psi" >$\psi$</span><span class="mathSymbol" alt="\omega" >$\omega$</span><span class="mathSymbol" alt="\Gamma" >$\Gamma$</span><span class="mathSymbol" alt="\Delta" >$\Delta$</span><span class="mathSymbol" alt="\Theta" >$\Theta$</span><span class="mathSymbol" alt="\Lambda" >$\Lambda$</span><span class="mathSymbol" alt="\Xi" >$\Xi$</span><span class="mathSymbol" alt="\Pi" >$\Pi$</span><span class="mathSymbol" alt="\Sigma" >$\Sigma$</span><span class="mathSymbol" alt="\Upsilon" >$\Upsilon$</span><span class="mathSymbol" alt="\Phi" >$\Phi$</span><span class="mathSymbol" alt="\Psi" >$\Psi$</span><span class="mathSymbol" alt="\Omega" >$\Omega$</span><span class="mathSymbol" alt="\gets" >$\gets$</span><span class="mathSymbol" alt="\to" >$\to$</span><span class="mathSymbol" alt="\leftarrow" >$\leftarrow$</span><span class="mathSymbol" alt="\Leftarrow" >$\Leftarrow$</span><span class="mathSymbol" alt="\rightarrow" >$\rightarrow$</span><span class="mathSymbol" alt="\Rightarrow" >$\Rightarrow$</span><span class="mathSymbol" alt="\leftrightarrow" >$\leftrightarrow$</span><span class="mathSymbol" alt="\Leftrightarrow" >$\Leftrightarrow$</span><span class="mathSymbol" alt="\mapsto" >$\mapsto$</span><span class="mathSymbol" alt="\hookleftarrow" >$\hookleftarrow$</span><span class="mathSymbol" alt="\leftharpoonup" >$\leftharpoonup$</span><span class="mathSymbol" alt="\leftharpoondown" >$\leftharpoondown$</span><span class="mathSymbol" alt="\rightleftharpoons" >$\rightleftharpoons$</span><span class="mathSymbol" alt="\longleftarrow" >$\longleftarrow$</span><span class="mathSymbol" alt="\Longleftarrow" >$\Longleftarrow$</span><span class="mathSymbol" alt="\longrightarrow" >$\longrightarrow$</span><span class="mathSymbol" alt="\Longrightarrow" >$\Longrightarrow$</span><span class="mathSymbol" alt="\longleftrightarrow" >$\longleftrightarrow$</span><span class="mathSymbol" alt="\Longleftrightarrow" >$\Longleftrightarrow$</span><span class="mathSymbol" alt="\longmapsto" >$\longmapsto$</span><span class="mathSymbol" alt="\hookrightarrow" >$\hookrightarrow$</span><span class="mathSymbol" alt="\rightharpoonup" >$\rightharpoonup$</span><span class="mathSymbol" alt="\rightharpoondown" >$\rightharpoondown$</span><span class="mathSymbol" alt="\leadsto" >$\leadsto$</span><span class="mathSymbol" alt="\uparrow" >$\uparrow$</span><span class="mathSymbol" alt="\Uparrow" >$\Uparrow$</span><span class="mathSymbol" alt="\downarrow" >$\downarrow$</span><span class="mathSymbol" alt="\Downarrow" >$\Downarrow$</span><span class="mathSymbol" alt="\updownarrow" >$\updownarrow$</span><span class="mathSymbol" alt="\Updownarrow" >$\Updownarrow$</span><span class="mathSymbol" alt="\nearrow" >$\nearrow$</span><span class="mathSymbol" alt="\searrow" >$\searrow$</span><span class="mathSymbol" alt="\swarrow" >$\swarrow$</span><span class="mathSymbol" alt="\nwarrow" >$\nwarrow$</span><span class="mathSymbol" alt="\hat{x}" >$\hat{x}$</span><span class="mathSymbol" alt="\check{x}" >$\check{x}$</span><span class="mathSymbol" alt="\dot{x}" >$\dot{x}$</span><span class="mathSymbol" alt="\breve{x}" >$\breve{x}$</span><span class="mathSymbol" alt="\acute{x}" >$\acute{x}$</span><span class="mathSymbol" alt="\ddot{x}" >$\ddot{x}$</span><span class="mathSymbol" alt="\grave{x}" >$\grave{x}$</span><span class="mathSymbol" alt="\tilde{x}" >$\tilde{x}$</span><span class="mathSymbol" alt="\mathring{x}" >$\mathring{x}$</span><span class="mathSymbol" alt="\bar{x}" >$\bar{x}$</span><span class="mathSymbol" alt="\vec{x}" >$\vec{x}$</span><span class="mathSymbol" alt="\vec{\jmath}" >$\vec{\jmath}$</span><span class="mathSymbol" alt="\tilde{\imath}" >$\tilde{\imath}$</span><span class="mathSymbol" alt="\widehat{3+x}" >$\widehat{3+x}$</span><span class="mathSymbol" alt="\widetilde{abc}" >$\widetilde{abc}$</span><span class="mathSymbol" alt="\infty" >$\infty$</span><span class="mathSymbol" alt="\triangle" >$\triangle$</span><span class="mathSymbol" alt="\angle" >$\angle$</span><span class="mathSymbol" alt="\aleph" >$\aleph$</span><span class="mathSymbol" alt="\hbar" >$\hbar$</span><span class="mathSymbol" alt="\imath" >$\imath$</span><span class="mathSymbol" alt="\jmath" >$\jmath$</span><span class="mathSymbol" alt="\ell" >$\ell$</span><span class="mathSymbol" alt="\wp" >$\wp$</span><span class="mathSymbol" alt="\Re" >$\Re$</span><span class="mathSymbol" alt="\Im" >$\Im$</span><span class="mathSymbol" alt="\mho" >$\mho$</span><span class="mathSymbol" alt="\prime" >$\prime$</span><span class="mathSymbol" alt="\emptyset" >$\emptyset$</span><span class="mathSymbol" alt="\nabla" >$\nabla$</span><span class="mathSymbol" alt="\surd" >$\surd$</span><span class="mathSymbol" alt="\partial" >$\partial$</span><span class="mathSymbol" alt="\top" >$\top$</span><span class="mathSymbol" alt="\bot" >$\bot$</span><span class="mathSymbol" alt="\forall" >$\forall$</span><span class="mathSymbol" alt="\exists" >$\exists$</span><span class="mathSymbol" alt="\neg" >$\neg$</span><span class="mathSymbol" alt="\flat" >$\flat$</span><span class="mathSymbol" alt="\natural" >$\natural$</span><span class="mathSymbol" alt="\sharp" >$\sharp$</span><span class="mathSymbol" alt="\backslash" >$\backslash$</span><span class="mathSymbol" alt="\clubsuit" >$\clubsuit$</span><span class="mathSymbol" alt="\diamondsuit" >$\diamondsuit$</span><span class="mathSymbol" alt="\heartsuit" >$\heartsuit$</span><span class="mathSymbol" alt="\spadesuit" >$\spadesuit$</span><span class="mathSymbol" alt="\Join" >$\Join$</span><span class="mathSymbol" alt="\blacksquare" >$\blacksquare$</span><span class="mathSymbol" alt="\S" >$\S$</span><span class="mathSymbol" alt="\bigstar" >$\bigstar$</span><span class="mathSymbol" alt="\square" >$\square$</span><span class="mathSymbol" alt="\&" >$\&$</span><span class="mathSymbol" alt="\%" >$\%$</span><span class="mathSymbol" alt="\#" >$\#$</span><span class="mathSymbol" alt="\_" >$\_$</span><span class="mathSymbol" alt="\{" >$\{$</span><span class="mathSymbol" alt="\}" >$\}$</span><span class="mathSymbol" alt="\lfloor" >$\lfloor$</span><span class="mathSymbol" alt="\rfloor" >$\rfloor$</span><span class="mathSymbol" alt="\lceil" >$\lceil$</span><span class="mathSymbol" alt="\rceil" >$\rceil$</span><span class="mathSymbol" alt="\langle" >$\langle$</span><span class="mathSymbol" alt="\rangle" >$\rangle$</span><span class="mathSymbol" alt="\frac{a}{x}" >$\frac{a}{x}$</span><span class="mathSymbol" alt="\left(\frac{a}{x}\right)^2" >$\left(\frac{a}{x}\right)^2$</span><span class="mathSymbol" alt="\sum" >$\sum$</span><span class="mathSymbol" alt="\int" >$\int$</span><span class="mathSymbol" alt="\oint" >$\oint$</span><span class="mathSymbol" alt="\prod" >$\prod$</span><span class="mathSymbol" alt="\coprod" >$\coprod$</span><span class="mathSymbol" alt="\bigcap" >$\bigcap$</span><span class="mathSymbol" alt="\bigcup" >$\bigcup$</span><span class="mathSymbol" alt="\bigsqcup" >$\bigsqcup$</span><span class="mathSymbol" alt="\bigvee" >$\bigvee$</span><span class="mathSymbol" alt="\bigwedge" >$\bigwedge$</span><span class="mathSymbol" alt="\bigodot" >$\bigodot$</span><span class="mathSymbol" alt="\bigotimes" >$\bigotimes$</span><span class="mathSymbol" alt="\bigoplus" >$\bigoplus$</span><span class="mathSymbol" alt="\biguplus" >$\biguplus$</span><span class="mathSymbol" alt="\left( \begin{array}{c} A \\ B \end{array} \right)" >$\left( \begin{array}{c} A \\ B \end{array} \right)$</span>
+			<div class="buttons">
+				<button class="close">Cancel</button>
+			</div>
+
+		</div>
+
+		<div class="modal insert-video" data-insert-element="Video">
+			<textarea placeholder="Video Embed Code"></textarea>
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal insert-table" data-insert-element="Table">
+			<input type="number" placeholder="Rows" data-input="rows" min="0">
+			<hr>
+			<input type="number" placeholder="Columns" data-input="columns" min="0">
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal insert-link" data-insert-element="Link">
+			<input type="text" placeholder="Text" data-input="text">
+			<input type="text" placeholder="Link" data-input="link">
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+		<div class="modal insert-image" data-insert-element="Image">
+			<input type="text" placeholder="Image URL">
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+
+
+        <div class="modal snippet">
+			<h2>Select a Language</h2>
+			<select name="language">
+				<option value='markup'>HTML</option>
+				<option value='css'>CSS</option>
+				<option value='clike'>C-like</option>
+				<option value='javascript'>JavaScript</option>
+				<option value='actionscript'>ActionScript</option>
+				<option value='apacheconf'>Apache Configuration</option>
+				<option value='applescript'>AppleScript</option>
+				<option value='aspnet'>ASP.NET (C#)</option>
+				<option value='bash'>Bash</option>
+				<option value='c'>C</option>
+				<option value='csharp'>C#</option>
+				<option value='cpp'>C++</option>
+				<option value='coffeescript'>CoffeeScript</option>
+				<option value='css-extras'>CSS Extras</option>
+				<option value='dart'>Dart</option>
+				<option value='docker'>Docker</option>
+				<option value='eiffel'>Eiffel</option>
+				<option value='erlang'>Erlang</option>
+				<option value='fsharp'>F#</option>
+				<option value='fortran'>Fortran</option>
+				<option value='git'>Git</option>
+				<option value='go'>Go</option>
+				<option value='groovy'>Groovy</option>
+				<option value='haml'>Haml</option>
+				<option value='handlebars'>Handlebars</option>
+				<option value='haskell'>Haskell</option>
+				<option value='http'>HTTP</option>
+				<option value='ini'>Ini</option>
+				<option value='jade'>Jade</option>
+				<option value='java'>Java</option>
+				<option value='less'>Less</option>
+				<option value='lua'>Lua</option>
+				<option value='makefile'>Makefile</option>
+				<option value='markdown'>Markdown</option>
+				<option value='matlab'>MATLAB</option>
+				<option value='nginx'>Nginx</option>
+				<option value='nix'>Nix</option>
+				<option value='objectivec'>Objective-C</option>
+				<option value='pascal'>Pascal</option>
+				<option value='perl'>Perl</option>
+				<option value='php'>PHP</option>
+				<option value='php-extras'>PHP Extras</option>
+				<option value='powershell'>PowerShell</option>
+				<option value='processing'>Processing</option>
+				<option value='puppet'>Puppet</option>
+				<option value='python'>Python</option>
+				<option value='r'>R</option>
+				<option value='jsx'>React JSX</option>
+				<option value='rest'>reST (reStructuredText)</option>
+				<option value='ruby'>Ruby</option>
+				<option value='sass'>Sass (Sass)</option>
+				<option value='scss'>Sass (Scss)</option>
+				<option value='scala'>Scala</option>
+				<option value='scheme'>Scheme</option>
+				<option value='smarty'>Smarty</option>
+				<option value='sql'>SQL</option>
+				<option value='stylus'>Stylus</option>
+				<option value='swift'>Swift</option>
+				<option value='typescript'>TypeScript</option>
+				<option value='wiki'>Wiki markup</option>
+				<option value='yaml'>YAML</option>
+			</select>
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+		</div>
+        <div class="modal edit-html">
+            <textarea></textarea>
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+        </div>
+
+		<div class="modal new-notebook">
+			<h2>Create Notebook</h2>
+			<input type="text" placeholder="Name" data-input="name">
+			<hr>
+			<input type="text" placeholder="Description" data-input="description">
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+        </div>
+
+		<div class="modal edit-notebook">
+			<h2>Edit Notebook</h2>
+			<input type="text" placeholder="Name" data-input="name">
+			<hr>
+			<input type="text" placeholder="Description" data-input="description">
+			<div class="buttons">
+				<button class="ok">Ok</button>
+				<button class="close">Cancel</button>
+			</div>
+        </div>
+
+		<div class="modal help">
+			<h1>Skrifa Help</h1>
+			<p>A small collection of tips so you can do incredible things with Skrifa.</p>
+			<h2>Notes</h2>
+			<hr>
+			<h4>Creating Notes</h4>
+			<p>Press the plus floating bottom in the lower right corner, a new note will be created in the Notebook you're currently in.</p>
+			<h4>Deleting Notes</h4>
+			<p>Press the trash icon on it, it will ask for your confirmation and then delete it.</p>
+			<h4>Editing Notes</h4>
+			<p>Press the pencil icon on it, it will bring the editor screen where you'll be able to write in your note.</p>
+			<h4>Viewing Notes</h4>
+			<p>If you don't want to edit your note but only want to look at it you can do so in the view screen, to open it just press the eye button on the note, from here you'll be able to export your note, print it and also this is where the math and code rendering will be shown.</p>
+			<h4>Moving a Note to other Notebook</h4>
+			<p>You can easily move Notes between Notebooks just by dragging the note to the Notebook you want on the left bar.</p>
+			<h4>Importing Notes</h4>
+			<p>You can import Skrifa and Markdown notes easily by pressing the import floating button in the lower right corner, they will be added to the notebook you are currently in.</p>
+			<h4>Export as PDF</h4>
+			<p>Exporting as PDF is not native as the HTML, Skrifa or Markdown export so the way to do it is press the Print button and choose save as PDF.</p>
+			<h2>Notebooks</h2>
+			<hr>
+			<h4><span class="fa fa-plus-square"></span> Creating a Notebook</h4>
+			<p>Press the plus squared button in the left bar, it will ask you for your notebook's name and a short description.</h4>
+			<h4><span class="fa fa-trash"></span> Deleting a Notebook</h4>
+			<p>Press the trash icon that appears below it's name and description in the left bar, you'll have to choose a deletion behavior, either moving all the notes it contains to your Inbox or deleting everything inside as well.</p>
+			<h4><span class="fa fa-pencil-square"></span> Editing a Notebook</h4>
+			<p>You can easily change the name or description of your notebook, just press the pencil icon that appears below it's name and description in the left bar.</p>
+			<h2>The Editor</h2>
+			<hr>
+			<p>There are some special tools available for you in the editor:</p>
+			<h3><span class="fa fa-code"></span> Custom HTML</h3>
+			<p>The custom HTML tool allows you to add any HTML code you want into your note.</p>
+			<h3><span class="fa fa-file-code-o"></span> Code Snippet</h3>
+			<p>You can insert a code snippet in your note, it even comes with syntax highlightning for many programming languages!.</p>
+			<h3>MathJax</h3>
+			<p>MathJax is supported for writing math, all you need to do is write two dollar signs $$ and everything you put inside of them will be rendered as math in the view screen of your note. The <span class="fa fa-superscript"></span>  tool in the editor has some math symbols for you to easily insert.</p>
+			<div class="buttons">
+				<button class="close">Close</button>
+			</div>
+        </div>
+
+		<div class="welcome">
+			<h2>Add some notes</h2>
+			<p>Your notebook is empty, press the floating plus (+) button to create a note.</p>
+		</div>
+
+        <div class="note-container unselectable"></div>
+
+        <div id="view"></div>
+
+		<div class="view-nav unselectable">
+			<button data-action="back"><span class="fa fa-arrow-left"></span> Back</button>
+			<button data-action="edit"><span class="fa fa-pencil"></span> Edit</button>
+			<button data-action="print"><span class="fa fa-print"></span> Print</button>
+			<button data-action="markdown-export"><span class="fa fa-download"></span> Markdown</button>
+			<button data-action="html-export"><span class="fa fa-download"></span> HTML</button>
+			<button data-action="note-export"><span class="fa fa-download"></span> Export Note</button>
+		</div>
+
+		<div class="notebook-nav unselectable active">
+			<h1>Inbox</h1>
+			<small>A place for any note</small>
+			<div>
+
+				<span class="fa fa-pencil-square" data-action="edit-notebook" title="Edit Notebook"></span>
+				<span class="fa fa-trash" data-action="delete-notebook" title="Delete Notebook"></span>
+			</div>
+
+            <input type="text" name="search" id="search" placeholder="Search" class="padded-1">
+
+			<div>
+				<span class="fa fa-th-list" data-action="change-view" title="Change View"></span>
+	            <span class="fa fa-moon-o" data-action="set-mode" title="Mode"></span>
+				<span class="fa fa-plus-square" data-action="new-notebook" title="New Notebook"></span>
+				<span class="fa fa-question" data-action="help" title="Help"></span>
+	            <span class="fa fa-ellipsis-v" data-action="more" title="More"></span>
+			</div>
+			<div class="notebooks-list">
+				<button data-notebook="Inbox">Inbox</button>
+			</div>
+		</div>
+
+        <div class="side-nav unselectable">
+            <div class="editor-tools">
+                <div>
+                    <button data-action="back"><span class="fa fa-arrow-left"></span> Back</button>
+                </div>
+
+                <div>
+                    <h3>Headers</h3>
+                    <button data-tool="h1" title="Header 1">H1</button>
+                    <button data-tool="h2" title="Header 2">H2</button>
+                    <button data-tool="h3" title="Header 3">H3</button>
+                    <button data-tool="h4" title="Header 4">H4</button>
+                    <button data-tool="h5" title="Header 5">H5</button>
+                    <button data-tool="h6" title="Header 6">H6</button>
+                </div>
+
+                <div>
+                    <h3>Style</h3>
+                    <button class="fa fa-bold" data-tool="bold"  title="Bold"></button>
+                    <button class="fa fa-italic" data-tool="italic"  title="Italic"></button>
+                    <button class="fa fa-underline" data-tool="underline"  title="Underline"></button>
+                    <button class="fa fa-strikethrough" data-tool="strikeThrough"  title="Strike Through"></button>
+					<!--<button class="fa fa-pencil" data-tool="mark"  title="Highlight"></button>-->
+                    <div>
+                        <button class="fa fa-align-left" data-tool="Left" title="Align Left"></button>
+                        <button class="fa fa-align-center" data-tool="Center" title="Align Center"></button>
+                        <button class="fa fa-align-right" data-tool="Right" title="Align Right"></button>
+                        <button class="fa fa-align-justify" data-tool="Full" title="Justify"></button>
+                    </div>
+
+                    <div>
+						<button class="fa fa-list-ul" data-tool="ul" title="Unordered List"></button>
+	                    <button class="fa fa-list-ol" data-tool="ol" title="Ordered List"></button>
+	                    <button class="fa fa-quote-right" data-tool="blockquote" title="Quote"></button>
+					</div>
+                </div>
+
+                <div>
+                    <h3>Insert</h3>
+                    <div>
+	                    <button class="fa fa-table" data-tool="table" title="Insert Table"></button>
+	                    <button class="fa fa-picture-o" data-tool="image" title="Insert Image"></button>
+	                    <button class="fa fa-video-camera" data-tool="video" title="Insert Video"></button>
+						<button class="fa fa-link" data-tool="link" title="Insert Link"></button>
+                    </div>
+                    <div>
+	                   <button class="fa fa-superscript" data-tool="insert-math" title="Insert Math Symbol"></button>
+					   <button class="fa fa-diamond" data-tool="insert-icon" title="Insert Icon"></button>
+
+	                   <button class="fa fa-code" data-tool="insert-html" title="Insert Custom HTML"></button>
+					   <button class="fa fa-file-code-o" data-tool="snippet" title="Insert Snippet"></button>
+
+                    </div>
+
+                </div>
+
+                <div>
+                    <h3>Actions</h3>
+                    <button class="fa fa-unlink" data-tool="unlink" title="Unlink"></button>
+                    <button class="fa fa-undo" data-tool="undo" title="Undo"></button>
+                    <button class="fa fa-repeat" data-tool="redo" title="Redo"></button>
+                    <button class="fa fa-gears" data-tool="edit-html" title="Edit HTML"></button>
+                </div>
+            </div>
+        </div>
+        <div contenteditable="true" id="editor"></div>
+
+	</body>
+</html>
