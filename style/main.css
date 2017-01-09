@@ -483,30 +483,36 @@ body.dark pre {
 }
 
 #view h1, #editor h1 {
+	font-weight: lighter;
     margin-bottom: 0.5em;
     font-size: 2em;
 }
 
 #view h2, #editor h2 {
+	font-weight: lighter;
     margin-bottom: 0.5em;
     font-size: 1.8em;
 }
 
 #view h3, #editor h3 {
+	font-weight: lighter;
     margin-bottom: 0.5em;
     font-size: 1.6em;
 }
 
 #view h4, #editor h4 {
+	font-weight: lighter;
     margin-bottom: 0.5em;
     font-size: 1.4em;
 }
 
 #view h5, #editor h5 {
+	font-weight: lighter;
     margin-bottom: 0.5em;
     font-size: 1.2em;
 }
 #view h6, #editor h6 {
+	font-weight: lighter;
     font-size: 1em;
     margin-bottom: 0.5em;
 }

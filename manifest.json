@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
 	"name": "Skrifa",
-	"version": "0.1.11",
-	"version_name": "0.1.11 - Papyrus",
+	"version": "0.1.12",
+	"version_name": "0.1.12 - Papyrus",
 	"offline_enabled": true,
 	"icons": {
 		"16": "img/icon_16.png",

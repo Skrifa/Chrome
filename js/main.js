@@ -989,6 +989,25 @@ $(document).ready(function(){
 		}
 	});
 
+	chrome.storage.sync.get('announcement', function(value){
+		if(value.announcement != 'seen'){
+			$(".announcement").addClass("active");
+		}
+	});
+
+	$(".announcement .ok").click(function(){
+		$(".announcement").removeClass("active");
+		window.open('https://skrifa.xyz', '_blank');
+		chrome.storage.sync.set({'announcement': 'seen'});
+	});
+
+	$(".announcement .close").click(function(){
+		$(".announcement").removeClass("active");
+		chrome.storage.sync.set({'announcement': 'seen'});
+	});
+
+
+
 	// Inserts a table with the culumns x rows given.
 	$(".insert-table .ok").click(function(){
 
