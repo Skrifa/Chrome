@@ -153,7 +153,7 @@ $(document).ready(function(){
 	function getAllNotesJSON(){
 		var json = "";
 		return db.notes.each(function(item, cursor){
-			json += '"'+item.id+'": {"id": ' + item.id + ', "Title": "' + JSON.stringify(item.Title) + '", "Content": ' + JSON.stringify(item.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CDate": "' + item.CDate + '", "MDate": "' + item.MDate + '", "Color": "' + item.Color + '", "Notebook": "' + item.Notebook + '"},';
+			json += '"'+item.id+'": {"id": ' + item.id + ', "Title": ' + JSON.stringify(item.Title) + ', "Content": ' + JSON.stringify(item.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CDate": "' + item.CDate + '", "MDate": "' + item.MDate + '", "Color": "' + item.Color + '", "Notebook": "' + item.Notebook + '"},';
 		}).then(function(){
 			return "{" + json.substring(0, json.length - 1) + "}";
 		});
