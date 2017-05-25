@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
-	"name": "Skrifa",
-	"version": "0.1.12",
-	"version_name": "0.1.12 - Papyrus",
+	"name": "Skrifa Chrome",
+	"version": "0.1.15",
+	"version_name": "0.1.15",
 	"offline_enabled": true,
 	"icons": {
 		"16": "img/icon_16.png",
