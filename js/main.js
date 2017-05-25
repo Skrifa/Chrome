@@ -198,34 +198,6 @@ $(document).ready(function(){
 		});
     }
 
-	function exportNoteToFile(fileEntry, format){
-		var content = "";
-		db.notes.where("id").equals(view).first(function(note){
-			switch(format){
-				case "Skrifa":
-					content = JSON.stringify(note);
-					break;
-
-				case "Markdown":
-					var und = new upndown();
-					content = note.Content.replace(/(?:\r\n|\r|\n)/g, '');
-					und.convert(content, function(error, markdown){
-						if(error){
-							console.err(error);
-						}else{
-							writeToEntry(fileEntry, markdown);
-						}
-					});
-					break;
-
-				case "HTML":
-					content = cleanHTML(note.Content).replace(/(?:\r\n|\r|\n)/g, '');
-					break;
-			}
-            writeToEntry(fileEntry, content);
-        });
-	}
-
     // Converts from Skrifa format to HTML and exports it.
     function exportToHTMLFileEntry(fileEntry){
         db.notes.where("id").equals(view).first(function(note){
@@ -449,19 +421,6 @@ $(document).ready(function(){
 				$(".notebooks-list").append('<button data-notebook="' + item.id + '">' + item.Name + '</button>');
 			});
 		});
-	}
-
-
-	// Gets the BLOB of the image from a url and returns the URL object.
-	function getImageUrl(element){
-		var xhr = new XMLHttpRequest();
-		var url = element[0].dataset.url;
-		xhr.open('GET', url, true);
-		xhr.responseType = 'blob';
-		xhr.onload = function(e) {
-			element[0].setAttribute("src", this.response);
-		};
-		xhr.send();
 	}
 
 	// Load the Notes
@@ -983,12 +942,6 @@ $(document).ready(function(){
 		var edited = $(".edit-html textarea").val();
 		if(edited != $("#editor").html()){
 			$("#editor").html(edited);
-			$("#editor img").each(function(){
-				if(!$(this)[0].dataset.url){
-					$(this)[0].dataset.url = $(this).attr("src");
-				}
-				getImageUrl($(this));
-			});
 			saveNote();
 		}
 		$(".edit-html").removeClass("active");
