@@ -79,20 +79,24 @@ $(document).ready(function(){
 					switch (extension) {
 						case "skrifa":
 							var json = JSON.parse(e.target.result);
-							if(json.Title && json.Content && json.CDate && json.MDate && json.Color){
-								db.notes.add({Title: json.Title, Content: json.Content, CDate: json.CDate, MDate: json.MDate, Color: json.Color, Notebook: notebook});
-
+							if(json.Title && json.Content && json.Color){
+								if (json.CDate && json.MDate) {
+									json.CreationDate = json.CDate;
+									json.ModificationDate = json.MDate;
+								}
+								db.notes.add({Title: json.Title, Content: json.Content, CreationDate: json.CreationDate, ModificationDate: json.ModificationDate, SyncDate: "", Color: json.Color, Notebook: notebook});
 								loadNotes();
 							}
 							break;
 
 						case "md":
-							var html = markdown.toHTML(e.target.result);
+							var md = window.markdownit();
+							var html = md.render(e.target.result);
 							var date = new Date().toString();
 							var h1 = $(html).filter("h1").text().trim();
 							h1 = h1 != "" ? h1: 'New Note';
 							if(h1 && html && date){
-								db.notes.add({Title: h1, Content: html, CDate: date, MDate: date, Color: colors[Math.floor(Math.random()*colors.length)], Notebook: notebook});
+								db.notes.add({Title: h1, Content: html, CreationDate: date, ModificationDate: date, SyncDate: "", Color: colors[Math.floor(Math.random()*colors.length)], Notebook: notebook});
 
 								loadNotes();
 							}
@@ -140,47 +144,71 @@ $(document).ready(function(){
 
 	// Generates the backup content and exports it.
 	function exportToFileEntry(fileEntry){
-		var json = '{"Version":  2, "Notebooks": ';
-		getAllNotebooksJSON().then(function(value){
-			json += value;
-			getAllNotesJSON().then(function(v2){
-				json += ', "Notes": ' + v2 + '}';
-				writeToEntry(fileEntry, json);
+		var json = {
+			version: 3,
+			notebooks: {
+
+			}
+		};
+
+		json.notebooks["Inbox"] = {
+			id: "Inbox",
+			Name: "Inbox",
+			Description: "A place for any note",
+			notes: []
+		}
+
+		db.transaction('r', db.notes, db.notebooks, function() {
+
+			db.notes.where('Notebook').equals("Inbox").each(function(item, cursor){
+				json.notebooks["Inbox"].notes.push({
+					Title: item.Title,
+					Content: item.Content,
+					CreationDate: item.CreationDate,
+					ModificationDate: item.ModificationDate,
+					SyncDate: item.SyncDate,
+					Color: item.Color,
+					Notebook: item.Notebook,
+				});
 			});
+
+			db.notebooks.each(function(item, cursor){
+				json.notebooks[item.id] = {
+					id: item.id,
+					Name: item.Name,
+					Description: item.Description,
+					notes: []
+				};
+
+				db.notes.where('Notebook').equals('' + item.id).each(function(item2, cursor2){
+					json.notebooks[item.id].notes.push({
+						Title: item2.Title,
+						Content: item2.Content,
+						CreationDate: item2.CreationDate,
+						ModificationDate: item2.ModificationDate,
+						SyncDate: item2.SyncDate,
+						Color: item2.Color,
+						Notebook: item2.Notebook,
+					});
+				});
+			}).then(function(){
+				writeToEntry(fileEntry, JSON.stringify(json));
+			});
+
 		});
     }
-
-	function getAllNotesJSON(){
-		var json = "";
-		return db.notes.each(function(item, cursor){
-			json += '"'+item.id+'": {"id": ' + item.id + ', "Title": ' + JSON.stringify(item.Title) + ', "Content": ' + JSON.stringify(item.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CDate": "' + item.CDate + '", "MDate": "' + item.MDate + '", "Color": "' + item.Color + '", "Notebook": "' + item.Notebook + '"},';
-		}).then(function(){
-			return "{" + json.substring(0, json.length - 1) + "}";
-		});
-	}
-
-	function getAllNotebooksJSON(){
-		var json = "";
-		return db.notebooks.each(function(item, cursor){
-
-			json += '"'+item.id+'": {"id": ' + item.id + ', "Name": ' + JSON.stringify(item.Name) + ', "Description": '  +JSON.stringify(item.Description) + '},';
-
-		}).then(function(){
-			return "{" + json.substring(0, json.length - 1) + "}";
-		});
-	}
 
 	function exportNoteToFile(fileEntry, format){
 		var content = "";
 		db.notes.where("id").equals(view).first(function(note){
 			switch(format){
 				case "Skrifa":
-					content = '{"id": ' + note.id + ', "Title": "' + note.Title + '", "Content": ' + JSON.stringify(note.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CDate": "' + note.CDate + '", "MDate": "' + note.MDate + '", "Color": "' + note.Color + '"}';
+					content = JSON.stringify(note);
 					break;
 
 				case "Markdown":
 					var und = new upndown();
-					content = note.Content.replace(/(?:\r\n|\r|\n)/g, '').replace(/data-url/g, "src").replace(/class="lazy" src=/g, "");
+					content = note.Content.replace(/(?:\r\n|\r|\n)/g, '');
 					und.convert(content, function(error, markdown){
 						if(error){
 							console.err(error);
@@ -191,7 +219,7 @@ $(document).ready(function(){
 					break;
 
 				case "HTML":
-					content = cleanHTML(note.Content).replace(/(?:\r\n|\r|\n)/g, '').replace(/data-url/g, "src").replace(/class="lazy" src=/g, "");
+					content = cleanHTML(note.Content).replace(/(?:\r\n|\r|\n)/g, '');
 					break;
 			}
             writeToEntry(fileEntry, content);
@@ -201,7 +229,7 @@ $(document).ready(function(){
     // Converts from Skrifa format to HTML and exports it.
     function exportToHTMLFileEntry(fileEntry){
         db.notes.where("id").equals(view).first(function(note){
-            var content = cleanHTML(note.Content).replace(/(?:\r\n|\r|\n)/g, '').replace(/data-url/g, "src").replace(/class="lazy" src=/g, "");
+            var content = cleanHTML(note.Content).replace(/(?:\r\n|\r|\n)/g, '');
             writeToEntry(fileEntry, content);
         });
     }
@@ -225,7 +253,7 @@ $(document).ready(function(){
 	// Exports the Skrifa Note
 	function exportToSkrifaFileEntry(fileEntry) {
 		db.notes.where("id").equals(view).first(function(note){
-			var contents = '{"id": ' + note.id + ', "Title": "' + note.Title + '", "Content": ' + JSON.stringify(note.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CDate": "' + note.CDate + '", "MDate": "' + note.MDate + '", "Color": "' + note.Color + '"}';
+			var contents = '{"id": ' + note.id + ', "Title": "' + note.Title + '", "Content": ' + JSON.stringify(note.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CreationDate": "' + note.CreationDate + '", "ModificationDate": "' + note.ModificationDate + '", "Color": "' + note.Color + '"}';
 
 			writeToEntry(fileEntry, contents);
 		});
@@ -245,7 +273,7 @@ $(document).ready(function(){
 		var date = new Date().toDateString().toLowerCase().split(' ').join('-');
 		chrome.fileSystem.chooseEntry( {
 		type: 'saveFile',
-		suggestedName: 'skrifa-backup-'+date+'.skrup',
+		suggestedName: 'Skrifa Chrome Backup '+date+'.skrup',
 		accepts: [ { description: 'Skrifa Backup files (*.skrup)',
 			extensions: ['skrup']} ],
 		acceptsAllTypes: true
@@ -272,8 +300,35 @@ $(document).ready(function(){
 	// Takes the given backup data and restores the notes from it.
 	function restoreFromBackup(data){
 		var data = JSON.parse(data);
+		if (typeof data.Version == 'undefined' && typeof data.version != 'undefined') {
+			data.Version = data.version;
+		}
 		var version = data.Version;
+
 		switch (version) {
+			case 3:
+				db.transaction('rw', db.notes, db.notebooks, function() {
+					db.notebooks.clear().then(function(deleteCount){
+						db.notes.clear().then(function(deleteCount){
+
+							for(var i in data.notebooks){
+								if(data.notebooks[i].id != "Inbox"){
+									db.notebooks.add({
+										id: data.notebooks[i].id,
+										Name: data.notebooks[i].Name,
+										Description: data.notebooks[i].Description
+									});
+								}
+								for(var j in data.notebooks[i].notes){
+									db.notes.add(data.notebooks[i].notes[j]);
+								}
+							}
+						});
+					});
+				}).then(function(){
+					loadNotes();
+				})
+				break;
 			case 2:
 				db.notebooks.clear().then(function(deleteCount){
 					for(var i in data.Notebooks){
@@ -560,7 +615,7 @@ $(document).ready(function(){
 			// Creates a new Note in the database and in the display.
 			case "new":
 				var date = new Date().toString();
-				db.notes.add({Title: 'New Note', Content: '<h1>New Note</h1>', CDate: date, MDate: date, Color: colors[Math.floor(Math.random()*colors.length)], Notebook: notebook});
+				db.notes.add({Title: 'New Note', Content: '<h1>New Note</h1>', CreationDate: date, ModificationDate: date, SyncDate: "", Color: colors[Math.floor(Math.random()*colors.length)], Notebook: notebook});
 				loadNotes();
 				break;
 
@@ -718,7 +773,7 @@ $(document).ready(function(){
 			var h1 = $("#editor h1").first().text().trim();
 			h1 = h1 != "" ? h1 : "Untitled";
 			if(html && h1 && date){
-				db.notes.where("id").equals(id).modify({Content: html, Title: h1, MDate: date});
+				db.notes.where("id").equals(id).modify({Content: html, Title: h1, ModificationDate: date});
 			}
 		});
 	}
