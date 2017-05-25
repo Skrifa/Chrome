@@ -1,17 +1,17 @@
 /** Space for all imported Fonts **/
 
 @font-face {
-  font-family: 'Roboto';
+  font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/Roboto-Light.ttf') format('truetype');
+  src: url('../fonts/OpenSans-Light.ttf') format('truetype');
 }
 
 /** Main Style goes here**/
 
 body {
     overflow: hidden;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 body.dark {
