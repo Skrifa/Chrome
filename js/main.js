@@ -191,10 +191,10 @@ $(document).ready(function(){
 						Notebook: item2.Notebook,
 					});
 				});
-			}).then(function(){
-				writeToEntry(fileEntry, JSON.stringify(json));
-			});
+			})
 
+		}).then(function(){
+			writeToEntry(fileEntry, JSON.stringify(json));
 		});
     }
 
@@ -253,7 +253,7 @@ $(document).ready(function(){
 	// Exports the Skrifa Note
 	function exportToSkrifaFileEntry(fileEntry) {
 		db.notes.where("id").equals(view).first(function(note){
-			var contents = '{"id": ' + note.id + ', "Title": "' + note.Title + '", "Content": ' + JSON.stringify(note.Content.replace(/(?:\r\n|\r|\n)/g, '')) + ', "CreationDate": "' + note.CreationDate + '", "ModificationDate": "' + note.ModificationDate + '", "Color": "' + note.Color + '"}';
+			var contents = JSON.stringify(note);
 
 			writeToEntry(fileEntry, contents);
 		});
@@ -767,7 +767,7 @@ $(document).ready(function(){
 
 	// Saves/Modifies the current note into the database.
 	function saveNote(){
-		var html = $("#editor").html().trim().replace(/<img src=/g, "<img data-original=");
+		var html = $("#editor").html().trim();
 		var date = new Date().toString();
 		db.transaction('rw', db.notes, function(){
 			var h1 = $("#editor h1").first().text().trim();
@@ -1026,21 +1026,40 @@ $(document).ready(function(){
 		saveNote();
 	});
 
+	// Transform images to Base64 encoding, encoding it to Base64 will produce a
+	// bigger size image which should be handled with care and it will also remove
+	// any metadata from the file, improving privacy
+	function toDataUrl (url, callback) {
+		var xhr = new XMLHttpRequest();
+		xhr.responseType = 'blob';
+		xhr.onload = function() {
+			var reader = new FileReader();
+			reader.onloadend = function() {
+				callback(reader.result);
+			}
+			reader.readAsDataURL(xhr.response);
+		};
+		xhr.onerror = function() {
+			$_("span.insertImage-div").remove();
+		};
+		xhr.open('GET', url);
+		xhr.send();
+	}
+
 	// Inserts the image form the given URL into the note.
 	$(".insert-image .ok").click(function(){
+		event.preventDefault();
 		var value = $(".insert-image input").val().trim();
 		if(value != ""){
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', value, true);
-			xhr.responseType = 'blob';
-			xhr.onload = function(e) {
-				$("span.insertImage-div").replaceWith("<img class='lazy' src='" + window.URL.createObjectURL(this.response) + "' alt='" + value + "' data-url='" + value + "'>");
+			toDataUrl(value, function(url){
+				$("span.insertImage-div").replaceWith("<img class='lazy' src='" + url+ "' alt='" + value + "' data-url='" + value + "'>");
+				$("span.insertImage-div").remove();
 				$("span.insertImage-div").remove();
 				$(".insert-image").removeClass("active");
 				$(".insert-image input").val("");
 				saveNote();
-			};
-			xhr.send();
+			});
+
 		}
 	});
 
@@ -1068,7 +1087,7 @@ $(document).ready(function(){
 
 		var columns = $(".insert-table input[data-input='columns']").val();
 		var rows = $(".insert-table input[data-input='rows']").val();
-		if(columns != "" && rows != ""){
+		if(columns != "" && rows != ""  && parseInt(columns) > 0 && parseInt(rows) > 0 ){
 			var table = "<br><div class='table-wrapper'> <table>";
 			for(var i = 0; i < rows; i++) {
 	            table += '<tr>';
