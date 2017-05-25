@@ -326,6 +326,7 @@ $(document).ready(function(){
 						});
 					});
 				}).then(function(){
+					loadNotebooks();
 					loadNotes();
 				})
 				break;
@@ -450,6 +451,7 @@ $(document).ready(function(){
 		});
 	}
 
+
 	// Gets the BLOB of the image from a url and returns the URL object.
 	function getImageUrl(element){
 		var xhr = new XMLHttpRequest();
@@ -457,7 +459,7 @@ $(document).ready(function(){
 		xhr.open('GET', url, true);
 		xhr.responseType = 'blob';
 		xhr.onload = function(e) {
-			element[0].setAttribute("src", window.URL.createObjectURL(this.response));
+			element[0].setAttribute("src", this.response);
 		};
 		xhr.send();
 	}
@@ -495,13 +497,37 @@ $(document).ready(function(){
 
 				MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 				$("#view img").each(function(){
-					if($(this)[0].dataset.url){
-						getImageUrl($(this));
-					}else{
-						$(this)[0].dataset.url =  $(this).attr("src");
-						getImageUrl($(this));
-					}
+					// Check if it is a base4 image first
+					var src = $(this).attr("src");
+					var element = $(this);
+					if (src.indexOf(",") > -1) {
+						if (atob(src.split(",")[1] )){
 
+						} else {
+
+							if($(this)[0].dataset.url){
+
+								toDataUrl($(this)[0].dataset.url, function (url){
+									element.attr("src", url);
+								});
+							} else {
+								toDataUrl(src, function (url){
+									element.attr("src", url);
+								});
+							}
+						}
+					} else {
+						if($(this)[0].dataset.url){
+
+							toDataUrl($(this)[0].dataset.url, function (url){
+								element.attr("src", url);
+							});
+						} else {
+							toDataUrl(src, function (url){
+								element.attr("src", url);
+							});
+						}
+					}
 				});
 				$(".view-nav").addClass("active");
 				$(".notebook-nav").removeClass("active");
@@ -660,12 +686,36 @@ $(document).ready(function(){
 						$("nav").hide();
 						setTimeout(function () {
 							$("#editor img").each(function(){
-								if($(this)[0].dataset.url != null && $(this)[0].dataset.url != ""){
-									getImageUrl($(this));
-								}else{
-									$(this)[0].dataset.url = $(this).attr("src");
-									getImageUrl($(this));
+								// Check if it is a base4 image first
+								var src = $(this).attr("src");
+								var element = $(this);
+								if (src.indexOf(",") > -1) {
+									if (atob(src.split(",")[1])){
 
+									} else {
+
+										if($(this)[0].dataset.url){
+
+											toDataUrl($(this)[0].dataset.url, function (url){
+												element.attr("src", url);
+											});
+										} else {
+											toDataUrl(src, function (url){
+												element.attr("src", url);
+											});
+										}
+									}
+								} else {
+									if($(this)[0].dataset.url){
+
+										toDataUrl($(this)[0].dataset.url, function (url){
+											element.attr("src", url);
+										});
+									} else {
+										toDataUrl(src, function (url){
+											element.attr("src", url);
+										});
+									}
 								}
 							}).promise().done(function(){
 								saveNote();
@@ -1059,7 +1109,6 @@ $(document).ready(function(){
 				$(".insert-image input").val("");
 				saveNote();
 			});
-
 		}
 	});
 
