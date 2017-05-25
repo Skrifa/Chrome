@@ -261,8 +261,7 @@ body.dark .notebooks-list {
 }
 
 .notebooks-list {
-    height: 70%;
-    max-height: 80%;
+    height: 80%;
     overflow-y: scroll;
     overflow-x: hidden;
     padding-bottom: 2em;
@@ -654,6 +653,15 @@ h1, h2, h3, h4, h5, h6 {
 	text-align: center;
 	width: 90%;
 	overflow: scroll;
+}
+
+::-webkit-scrollbar {
+    background: transparent;
+	width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
 }
 
 /** Place here all Media Queries and it's styles.**/
