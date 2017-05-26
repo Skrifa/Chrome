@@ -211,7 +211,7 @@ $(document).ready(function(){
 
         db.notes.where("id").equals(view).first(function(note){
             var und = new upndown();
-            var content = note.Content.replace(/(?:\r\n|\r|\n)/g, '').replace(/data-url/g, "src").replace(/class="lazy" src=/g, "");
+            var content = note.Content.replace(/(?:\r\n|\r|\n)/g, '');
             und.convert(content, function(error, markdown){
     			if(error){
     				console.err(error);
