@@ -92,7 +92,7 @@ $(document).ready(function(){
 						case "md":
 							var md = window.markdownit();
 							var html = md.render(e.target.result);
-							var date = new Date().toString();
+							var date = new Date().toLocaleString();
 							var h1 = $(html).filter("h1").text().trim();
 							h1 = h1 != "" ? h1: 'New Note';
 							if(h1 && html && date){
@@ -242,7 +242,7 @@ $(document).ready(function(){
 
 	// Choose or create the backup file to export to.
 	function createBackupJson(){
-		var date = new Date().toDateString().toLowerCase().split(' ').join('-');
+		var date = new Date().toLocaleDateString().replace(/\//g, "-");
 		chrome.fileSystem.chooseEntry( {
 		type: 'saveFile',
 		suggestedName: 'Skrifa Chrome Backup '+date+'.skrup',
@@ -599,7 +599,7 @@ $(document).ready(function(){
 
 			// Creates a new Note in the database and in the display.
 			case "new":
-				var date = new Date().toString();
+				var date = new Date().toLocaleString();
 				db.notes.add({Title: 'New Note', Content: '<h1>New Note</h1>', CreationDate: date, ModificationDate: date, SyncDate: "", Color: colors[Math.floor(Math.random()*colors.length)], Notebook: notebook});
 				loadNotes();
 				break;
@@ -777,7 +777,7 @@ $(document).ready(function(){
 	// Saves/Modifies the current note into the database.
 	function saveNote(){
 		var html = $("#editor").html().trim();
-		var date = new Date().toString();
+		var date = new Date().toLocaleString();
 		db.transaction('rw', db.notes, function(){
 			var h1 = $("#editor h1").first().text().trim();
 			h1 = h1 != "" ? h1 : "Untitled";
