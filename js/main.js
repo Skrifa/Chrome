@@ -298,6 +298,9 @@ $(document).ready(function(){
 						});
 					});
 				}).then(function(){
+					notebook = "Inbox";
+					$(".notebook-nav h1").text("Inbox");
+					$(".notebook-nav small").text("A place for any note");
 					loadNotebooks();
 					loadNotes();
 				})
@@ -316,6 +319,9 @@ $(document).ready(function(){
 						data.Notes[i].id = parseInt(data.Notes[i].id);
 						db.notes.add(data.Notes[i]);
 					}
+					notebook = "Inbox";
+					$(".notebook-nav h1").text("Inbox");
+					$(".notebook-nav small").text("A place for any note");
 					loadNotes();
 				});
 				break;
@@ -326,6 +332,9 @@ $(document).ready(function(){
 						data[i].Notebook = "Inbox";
 						db.notes.add(data[i]);
 					}
+					notebook = "Inbox";
+					$(".notebook-nav h1").text("Inbox");
+					$(".notebook-nav small").text("A place for any note");
 					loadNotes();
 					$(".restore-backup").removeClass("active");
 					$(".restore-confirmation").removeClass("active");
