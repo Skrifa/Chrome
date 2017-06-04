@@ -360,20 +360,8 @@ $(document).ready(function(){
 				}
 			});
 			db.notes.where("Notebook").equals(notebook).each(function(item, cursor){
-				var content = item.Content;
-				if(item.Title != "Untitled"){
-					try{
-						content = content.replace("<h1>" + item.Title + "</h1>", "").replace(/(<([^>]+)>)/ig, "");
-					}catch(e){
-						console.log(e);
-					}
-				}else{
-					content = content.replace(/(<([^>]+)>)/ig, "");
-				}
 
-				content = content.length >= 40 ? content.substring(0, 40) : content.substring(0, content.length);
-
-				$(".note-container").append("<article data-color='" + item.Color + "' draggable='true' data-nid='"+item.id+"'><div class='content' ><h2>" + item.Title + "</h2><span>" + content + "</span></div><div class='note-actions'><span class='fa fa-eye' data-view='" + item.id + "'></span><span class='fa-pencil fa' data-note-id='"+item.id+"' data-action='edit'></span><span class='fa-trash fa' data-note-id='"+item.id+"' data-action='delete'></span></div></article>");
+				$(".note-container").append("<article data-color='" + item.Color + "' draggable='true' data-nid='"+item.id+"'><div class='content' ><h2>" + item.Title + "</h2></div><div class='note-actions'><span class='fa fa-eye' data-view='" + item.id + "'></span><span class='fa-pencil fa' data-note-id='"+item.id+"' data-action='edit'></span><span class='fa-trash fa' data-note-id='"+item.id+"' data-action='delete'></span></div></article>");
 
 				$(".list article").each(function(){
 					$(this).css("border-color", $(this).data("color"));
@@ -516,22 +504,7 @@ $(document).ready(function(){
 			db.transaction('r', db.notes, function(){
 				db.notes.where("Notebook").equals(notebook).each(function(item, cursor){
 					if(item.Content.toLowerCase().indexOf($(".notebook-nav input").val().toLowerCase()) > -1){
-						var content = item.Content;
-						if(item.Title != "Untitled"){
-							try{
-								content = content.replace("<h1>" + item.Title + "</h1>", "").replace(/(<([^>]+)>)/ig, "");
-							}catch(e){
-								console.log(e);
-							}
-						}else{
-							content = content.replace(/(<([^>]+)>)/ig, "");
-						}
-						if(content.length >= 40){
-							content = content.substring(0, 40);
-						}else{
-							content = content.substring(0, content.length);
-						}
-						$(".note-container").append("<article data-color='" + item.Color + "' ><div class='content' data-view='" + item.id + "'><h2>" + item.Title + "</h2><span>" + content + "</span></div><div class='note-actions'><span class='fa fa-eye' data-view='" + item.id + "'></span><span class='fa-pencil fa' data-note-id='"+item.id+"' data-action='edit'></span><span class='fa-trash fa' data-note-id='"+item.id+"' data-action='delete'></span></div></article>");
+						$(".note-container").append("<article data-color='" + item.Color + "' ><div class='content' data-view='" + item.id + "'><h2>" + item.Title + "</h2></div><div class='note-actions'><span class='fa fa-eye' data-view='" + item.id + "'></span><span class='fa-pencil fa' data-note-id='"+item.id+"' data-action='edit'></span><span class='fa-trash fa' data-note-id='"+item.id+"' data-action='delete'></span></div></article>");
 
 						$(".list article").each(function(){
 							$(this).css("border-color", $(this).data("color"));
@@ -627,7 +600,6 @@ $(document).ready(function(){
 					$(".side-nav").removeClass("active");
 					$(".view-nav").removeClass("active");
 					$(".notebook-nav").addClass("active");
-					loadNotes();
 					$("nav").show();
 					$(".note-container").show();
 				});
@@ -790,6 +762,7 @@ $(document).ready(function(){
 		db.transaction('rw', db.notes, function(){
 			var h1 = $("#editor h1").first().text().trim();
 			h1 = h1 != "" ? h1 : "Untitled";
+			$("[data-nid='" + id + "'] h2").text(h1);
 			if(html && h1 && date){
 				db.notes.where("id").equals(id).modify({Content: html, Title: h1, ModificationDate: date});
 			}
@@ -972,8 +945,8 @@ $(document).ready(function(){
 	$(".delete-confirmation .ok").click(function(){
 		db.transaction('rw', db.notes, function(){
 			db.notes.where("id").equals(deltempid).delete();
+			$("[data-nid='" + deltempid + "']").remove();
 			deltempid = null;
-			loadNotes();
 			$(".delete-confirmation").removeClass("active");
 		});
 	});
@@ -981,44 +954,36 @@ $(document).ready(function(){
 	$(".notebook-delete-confirmation .ok").click(function(){
 		switch($(".notebook-delete-confirmation select").val()){
 			case "Move":
-				db.transaction('rw', db.notebooks, function(){
-					db.notebooks.where("id").equals(parseInt(notebook)).delete().then(function(){
-						loadNotebooks();
-					});
+				db.transaction('rw', db.notebooks, db.notes, function(){
+					db.notebooks.where("id").equals(parseInt(notebook)).delete();
+					db.notes.where("Notebook").equals(notebook).modify({Notebook: "Inbox"});
+
 				}).then(function(){
-					db.transaction('rw', db.notes, function(){
-						db.notes.where("Notebook").equals(notebook).modify({Notebook: "Inbox"}).then(function(){
-							notebook = "Inbox";
-							$(".notebook-nav h1").text("Inbox");
-							$(".notebook-nav small").text("A place for any note");
-							$("[data-action='edit-notebook']").hide();
-							$("[data-action='delete-notebook']").hide();
-							loadNotes();
-							$(".notebook-delete-confirmation").removeClass("active");
-						});
-					});
+					notebook = "Inbox";
+					$(".notebook-nav h1").text("Inbox");
+					$(".notebook-nav small").text("A place for any note");
+					$("[data-action='edit-notebook']").hide();
+					$("[data-action='delete-notebook']").hide();
+					loadNotebooks();
+					loadNotes();
+					$(".notebook-delete-confirmation").removeClass("active");
 				});
 				break;
 
 			case "Delete":
-				db.transaction('rw', db.notebooks, function(){
-					db.notebooks.where("id").equals(parseInt(notebook)).delete().then(function(){
-						loadNotebooks();
-
-					});
+				db.transaction('rw', db.notebooks, db.notes, function(){
+					db.notebooks.where("id").equals(parseInt(notebook)).delete();
+					db.notes.where("Notebook").equals(notebook).delete();
 
 				}).then(function(){
-					db.transaction('rw', db.notes, function(){
-						db.notes.where("Notebook").equals(notebook).delete().then(function(){
-							notebook = "Inbox";
-							$(".notebook-nav h1").text("Inbox");
-							$(".notebook-nav small").text("A place for any note");
-							$("[data-action='edit-notebook']").hide();
-							$("[data-action='delete-notebook']").hide();
-							loadNotes();
-							$(".notebook-delete-confirmation").removeClass("active");
-						});
-					});
+					notebook = "Inbox";
+					$(".notebook-nav h1").text("Inbox");
+					$(".notebook-nav small").text("A place for any note");
+					$("[data-action='edit-notebook']").hide();
+					$("[data-action='delete-notebook']").hide();
+					loadNotebooks();
+					loadNotes();
+					$(".notebook-delete-confirmation").removeClass("active");
 				});
 				break;
 		}
